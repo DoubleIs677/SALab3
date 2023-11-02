@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+<body>
+  <style>
+    .contact-list {
+        width: 300px;
+        padding: 10px;
+        border: 1px solid #ccc;
+    }
+    .contact-item {
+        margin-bottom: 10px;
+    }
+    .contact-item span {
+        display: block;
+        font-weight: bold;
+    }
+    .contact-form{
+      float:left;
+      margin-right: 30px;
+    }
+    .contact-form input {
+        display: block;
+        margin-bottom: 10px;
+    }
+    .contact-form button {
+        display: block;
+    }
+    .edit-form input {
+        display: block;
+        margin-bottom: 10px;
+    }
+    .edit-form button {
+        display: block;
+    }
+</style>
+  <div class="contact-list">
+    <h2>联系人列表</h2>
+    <div id="contact-list-container"></div>
+</div>
+
+<div class="contact-form">
+    <h2>添加联系人</h2>
+    <input type="text" id="name" placeholder="姓名" />
+    <input type="text" id="phone" placeholder="电话号码" />
+    <input type="text" id="email" placeholder="电子邮件" />
+    <button onclick="addContact()">添加</button>
+</div>
+
+<div class="edit-form">
+    <h2>编辑联系人</h2>
+    <input type="text" id="edit-name" placeholder="姓名" />
+    <input type="text" id="edit-phone" placeholder="电话号码" />
+    <input type="text" id="edit-email" placeholder="电子邮件" />
+    <button onclick="saveContact()">保存</button>
+    <button onclick="cancelEdit()">取消</button>
+</div>
+
+<script>
+  // 定义一个联系人对象，包含姓名、电话号码和电子邮件
+function Contact(name, phone, email) {
+    this.name = name;
+    this.phone = phone;
+    this.email = email;
+}
+
+var contacts = []; // 用于存储联系人的数组
+var selectedContactIndex = -1; // 被选中的联系人在数组中的索引
+
+// 添加联系人
+function addContact() {
+    var name = document.getElementById("name").value;
+    var phone = document.getElementById("phone").value;
+    var email = document.getElementById("email").value;
+
+    var contact = new Contact(name, phone, email);
+    contacts.push(contact);
+
+    renderContactList();
+    clearContactForm();
+}
+
+// 渲染联系人列表
+function renderContactList() {
+    var contactListContainer = document.getElementById("contact-list-container");
+    contactListContainer.innerHTML = "";
+
+    for (var i = 0; i < contacts.length; i++) {
+        var contactItemDiv = document.createElement("div");
+        contactItemDiv.className = "contact-item";
+
+        var contact = contacts[i];
+
+        var nameSpan = document.createElement("span");
+        nameSpan.innerHTML = "姓名: " + contact.name;
+        contactItemDiv.appendChild(nameSpan);
+
+        var phoneSpan = document.createElement("span");
+        phoneSpan.innerHTML = "电话号码: " + contact.phone;
+        contactItemDiv.appendChild(phoneSpan);
+
+        var emailSpan = document.createElement("span");
+        emailSpan.innerHTML = "电子邮件: " + contact.email;
+        contactItemDiv.appendChild(emailSpan);
+
+        // 添加编辑按钮
+        var editButton = document.createElement("button");
+        editButton.innerHTML = "编辑";
+        editButton.onclick = function(index) {
+            return function() {
+                editContact(index);
+            };
+        }(i);
+        contactItemDiv.appendChild(editButton);
+
+        // 添加删除按钮
+        var deleteButton = document.createElement("button");
+        deleteButton.innerHTML = "删除";
+        deleteButton.onclick = function(index) {
+            return function() {
+                deleteContact(index);
+            };
+        }(i);
+        contactItemDiv.appendChild(deleteButton);
+
+        contactListContainer.appendChild(contactItemDiv);
+    }
+}
+
+// 编辑联系人
+function editContact(index) {
+    var contact = contacts[index];
+    document.getElementById("edit-name").value = contact.name;
+    document.getElementById("edit-phone").value = contact.phone;
+       // 假设点击保存按钮后执行saveContact函数保存修改后的联系人信息
+       document.getElementById("save-button").addEventListener("click", function() {
+        var newName = document.getElementById("edit-name").value;
+        var newPhone = document.getElementById("edit-phone").value;
+
+        // 更新联系人信息
+        contact.name = newName;
+        contact.phone = newPhone;
+
+        // 保存联系人信息到本地或服务器
+        saveContact(contact);
+
+        // 清空输入框
+        document.getElementById("edit-name").value = "";
+        document.getElementById("edit-phone").value = "";
+
+        // 提示保存成功
+        alert("联系人信息已保存");
+    });
+}
+</script>
+</body>
+</html>
